@@ -191,11 +191,16 @@ function openEditForm(event) {
 
 
 // Handle form submission for editing an item
-document.getElementById('form-editar').addEventListener('submit', async function(event) {
+// Handle form submission for editing an item
+document.getElementById('form-editar').addEventListener('submit', async function (event) {
     event.preventDefault();
+
+    // Initialize itemId first before using it
+    const itemId = document.getElementById('edit-id').value;
+
+    // Create storage reference with the initialized itemId
     const storageRef = ref(storage, `items/${itemId}/${Date.now()}`);
     const imageInput = document.getElementById('edit-image');
-    const itemId = document.getElementById('edit-id').value;
     let imageUrl = null;
 
     if (imageInput.files.length > 0) {
@@ -205,18 +210,20 @@ document.getElementById('form-editar').addEventListener('submit', async function
     }
 
     const updatedData = {
-        nombre: document.getElementById('edit-codCatalogo').value,
         nombre: document.getElementById('edit-nombre').value,
+        codigoCatalogo: document.getElementById('edit-codCatalogo').value,
         categoria: document.getElementById('edit-categoria').value,
         marca: document.getElementById('edit-marca').value,
         cantidad: parseInt(document.getElementById('edit-cantidad').value),
         precio: parseFloat(document.getElementById('edit-precio').value),
-        talle: document.getElementById('edit-talle').value,  // Add talle
-        color: document.getElementById('edit-color').value   // Add color
+        talle: document.getElementById('edit-talle').value, // Add talle
+        color: document.getElementById('edit-color').value, // Add color
     };
+
     if (imageUrl) {
         updatedData.imageUrl = imageUrl;
     }
+
     // Log data before update for debugging
     console.log("Updating item with ID:", itemId, "with data:", updatedData);
 
@@ -239,6 +246,7 @@ document.getElementById('form-editar').addEventListener('submit', async function
         console.error("Error updating document: ", error);
     }
 });
+
 
 
 
