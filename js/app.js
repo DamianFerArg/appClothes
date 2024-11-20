@@ -1,7 +1,7 @@
 // Import Firebase SDKs and Firestore
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
 // Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBvluKIuZRR3CDlGeJSa6qYF0pAdgCpnBE",
@@ -13,10 +13,11 @@ const firebaseConfig = {
     measurementId: "G-E7SX5N778J"
 };
 
-// Initialize Firebase and Firestore
+// Initialize Firebase and Firestore}
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const storage = getStorage(app);
 //------------------------------------------------------------------------------------------LOAD CATEGORIES & ITEMS
 async function populateEditCategories() {
     try {
@@ -112,7 +113,7 @@ function loadItems() {
 
             // Update the item card to display new fields
             itemCard.innerHTML = `
-                <img src="https://via.placeholder.com/150" alt="${itemData.nombre}" class="item-image">
+            <img src="${itemData.imageUrl || 'https://via.placeholder.com/150'}" alt="${itemData.nombre}" class="item-image">
                 <h3>${itemData.nombre}</h3>
                 <p>CodCatalogo: ${itemData.codigoCatalogo}</p>
                 <p>Categoría: ${itemData.categoria}</p>
@@ -148,6 +149,13 @@ function openEditForm(event) {
         getDoc(doc(db, "inventario", itemId)).then((docSnapshot) => {
             if (docSnapshot.exists()) {
                 const itemData = docSnapshot.data();
+                const imagePreview = document.getElementById('edit-preview');
+                if (itemData.imageUrl) {
+                    imagePreview.src = itemData.imageUrl;
+                    imagePreview.style.display = 'block';
+                } else {
+                    imagePreview.style.display = 'none';
+                }
 
                 // Populate the form fields with data from Firestore
                 document.getElementById('edit-id').value = itemId;
@@ -185,8 +193,17 @@ function openEditForm(event) {
 // Handle form submission for editing an item
 document.getElementById('form-editar').addEventListener('submit', async function(event) {
     event.preventDefault();
-
+    const storageRef = ref(storage, `items/${itemId}/${Date.now()}`);
+    const imageInput = document.getElementById('edit-image');
     const itemId = document.getElementById('edit-id').value;
+    let imageUrl = null;
+
+    if (imageInput.files.length > 0) {
+        const file = imageInput.files[0];
+        const snapshot = await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(snapshot.ref);
+    }
+
     const updatedData = {
         nombre: document.getElementById('edit-codCatalogo').value,
         nombre: document.getElementById('edit-nombre').value,
@@ -197,7 +214,9 @@ document.getElementById('form-editar').addEventListener('submit', async function
         talle: document.getElementById('edit-talle').value,  // Add talle
         color: document.getElementById('edit-color').value   // Add color
     };
-
+    if (imageUrl) {
+        updatedData.imageUrl = imageUrl;
+    }
     // Log data before update for debugging
     console.log("Updating item with ID:", itemId, "with data:", updatedData);
 
