@@ -62,7 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form) {
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-
+                const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+                if (!isLoggedIn || isLoggedIn !== "true") {
+                    alert("You must be logged in to delete items.");
+                    return;
+                }
                 // Get form values
                 let idProducto = document.getElementById('idProducto').value;
                 let codigoCatalogo = document.getElementById('codigoCatalogo').value;
@@ -91,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         talle: talle || "Unico",  // Default if not provided
                         color: color || "Sin color",  // Default if not provided
                         cantidad: parseInt(cantidad) || 0,  // Ensure valid quantity
-                        precio: parseFloat(precio.replace("$", "").trim()) || 0  // Clean price and parse it
+                        precio: parseFloat(precio.replace("$", "").trim()) || 0,
+                        authToken: "authenticated"  // Clean price and parse it
                     });
 
                     // Clear form after successful submission

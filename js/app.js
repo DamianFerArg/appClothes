@@ -2,12 +2,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
 // Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBvluKIuZRR3CDlGeJSa6qYF0pAdgCpnBE",
     authDomain: "proyectclothes-b6e88.firebaseapp.com",
     projectId: "proyectclothes-b6e88",
-    storageBucket: "proyectclothes-b6e88.appspot.com",
+    storageBucket: "proyectclothes-b6e88.firebasestorage.app",
     messagingSenderId: "973366577223",
     appId: "1:973366577223:web:66403424635d1300de4962",
     measurementId: "G-E7SX5N778J"
@@ -194,7 +196,11 @@ function openEditForm(event) {
 // Handle form submission for editing an item
 document.getElementById('form-editar').addEventListener('submit', async function (event) {
     event.preventDefault();
-
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (!isLoggedIn || isLoggedIn !== "true") {
+        alert("You must be logged in to upload.");
+        return;
+    }
     // Initialize itemId first before using it
     const itemId = document.getElementById('edit-id').value;
 
@@ -205,8 +211,20 @@ document.getElementById('form-editar').addEventListener('submit', async function
 
     if (imageInput.files.length > 0) {
         const file = imageInput.files[0];
-        const snapshot = await uploadBytes(storageRef, file);
-        imageUrl = await getDownloadURL(snapshot.ref);
+        const metadata = {
+            customMetadata: {
+                authToken: "authenticated" // Custom token to satisfy Storage Rules
+            }
+        };
+
+        try {
+            const snapshot = await uploadBytes(storageRef, file, metadata);
+            imageUrl = await getDownloadURL(snapshot.ref);
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert("Upload failed. Please try again.");
+            return;
+        }
     }
 
     const updatedData = {
@@ -218,6 +236,7 @@ document.getElementById('form-editar').addEventListener('submit', async function
         precio: parseFloat(document.getElementById('edit-precio').value),
         talle: document.getElementById('edit-talle').value, // Add talle
         color: document.getElementById('edit-color').value, // Add color
+        authToken: "authenticated" 
     };
 
     if (imageUrl) {
@@ -265,19 +284,48 @@ document.getElementById('categoria-select').addEventListener('change', function(
 });
 //---------------------------------------------------------------------------BORRAR
 async function deleteItem(itemId) {
-    if (confirm("¿Estás seguro de que deseas eliminar este ítem?")) {
-        try {
-            await deleteDoc(doc(db, "inventario", itemId));
+    // Check if the user is logged in using sessionStorage
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+
+    // If the user is not logged in, show an alert and return
+    if (!isLoggedIn || isLoggedIn !== "true") {
+        alert("You must be logged in to delete an item.");
+        return;
+    }
+
+    // Get the authToken (this should match your server-side token or logic for authentication)
+    const authToken = "authenticated";  // Or retrieve it based on your self-authentication logic
+
+    try {
+        if (authToken !== "authenticated") {
+            alert("You do not have permission to perform this action.");
+            return;
+        }
+
+        // Perform delete if user has the proper token
+        if (confirm("¿Estás seguro de que deseas eliminar este ítem?")) {
+            // Passing token in the Firestore metadata
+            await deleteDoc(doc(db, "inventario", itemId), {
+                headers: {
+                    authToken: "authenticated"  // Here you pass the token as metadata
+                }
+            });
+
             alert("Ítem eliminado exitosamente.");
             loadItems(); // Refresh the inventory list after deletion
             document.getElementById('edit-item').classList.add('hidden'); // Hide the modal after deletion
             document.getElementById('edit-overlay').classList.add('hidden'); // Hide the overlay
-        } catch (error) {
-            console.error("Error al eliminar el ítem: ", error);
-            alert("Ocurrió un error al eliminar el ítem.");
         }
+
+    } catch (error) {
+        console.error("Error al eliminar el ítem: ", error);
+        alert("Ocurrió un error al eliminar el ítem.");
     }
 }
+
+
+
+
 
 // Attach the delete button listener
 document.querySelector('.delete-btn').addEventListener('click', (event) => {
@@ -327,7 +375,8 @@ export async function importData() {
                 talle: item["Talle"] || "Unico",
                 color: item["Color"] || "Sin color",
                 cantidad: parseInt(item["Cantidad en stock"]) || 0,
-                precio: parseFloat(priceString.replace("$", "").trim()) || 0, // Clean and parse price
+                precio: parseFloat(priceString.replace("$", "").trim()) || 0,
+                authToken: "authenticated"
             };
 
             // Skip invalid rows
