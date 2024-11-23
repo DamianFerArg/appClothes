@@ -1,7 +1,7 @@
 // Import Firebase SDKs and Firestore
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
+import { serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBvluKIuZRR3CDlGeJSa6qYF0pAdgCpnBE",
@@ -96,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         color: color || "Sin color",  // Default if not provided
                         cantidad: parseInt(cantidad) || 0,  // Ensure valid quantity
                         precio: parseFloat(precio.replace("$", "").trim()) || 0,
-                        authToken: "authenticated"  // Clean price and parse it
+                        authToken: "authenticated",
+                        createdAt: serverTimestamp()  // Clean price and parse it
                     });
 
                     // Clear form after successful submission
