@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 // Get form values
-                let idProducto = document.getElementById('idProducto').value;
                 let codigoCatalogo = document.getElementById('codigoCatalogo').value;
                 let nombre = document.getElementById('nombre').value;
                 let marca = document.getElementById('marca').value;
@@ -87,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Create new document in Firestore
                 try {
                     await addDoc(collection(db, "inventario"), {
-                        idProducto: idProducto || null,  // Handling ID Product
                         codigoCatalogo: codigoCatalogo || "",  // Handling Catalog Code
                         nombre: nombre || "Sin nombre",  // Default if not provided
                         marca: marca || "Sin marca",  // Default if not provided
@@ -108,5 +106,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+    }
+});
+document.addEventListener('DOMContentLoaded', () => {
+    loadCategories();
+
+    // Pre-fill form with data from URL parameters
+    const params = new URLSearchParams(window.location.search);
+
+    document.getElementById('codigoCatalogo').value = params.get('codigoCatalogo') || '';
+    document.getElementById('nombre').value = params.get('nombre') || '';
+    document.getElementById('marca').value = params.get('marca') || '';
+    document.getElementById('categoria').value = params.get('categoria') || '';
+    document.getElementById('cantidad').value = params.get('cantidad') || '';
+    document.getElementById('precio').value = params.get('precio') || '';
+    document.getElementById('talle').value = params.get('talle') || '';
+    document.getElementById('color').value = params.get('color') || '';
+
+    // Attach form submission handler
+    const form = document.getElementById('form-agregar');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Your existing form submission logic
+        });
     }
 });

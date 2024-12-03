@@ -125,6 +125,7 @@ function loadItems() {
                 <p>Cantidad: ${itemData.cantidad}</p>
                 <p>Precio: ${itemData.precio} pesos</p>
                 <button class="edit-btn" data-id="${itemId}">Editar</button>
+                <button class="add-similar-btn" data-item='${JSON.stringify(itemData)}'>Agregar Prenda Similar</button>
             `;
 
             itemList.appendChild(itemCard);
@@ -133,6 +134,13 @@ function loadItems() {
         // Attach event listeners to edit buttons
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', openEditForm);
+        });
+        document.querySelectorAll('.add-similar-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const itemData = JSON.parse(this.dataset.item);
+                const queryString = new URLSearchParams(itemData).toString();
+                window.location.href = `add_item.html?${queryString}`;
+            });
         });
     }).catch(error => {
         console.error("Error fetching Firestore data: ", error);
