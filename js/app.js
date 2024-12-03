@@ -20,6 +20,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
+
 //------------------------------------------------------------------------------------------LOAD CATEGORIES & ITEMS
 async function populateEditCategories() {
     try {
@@ -112,6 +113,7 @@ function loadItems() {
             const itemCard = document.createElement('div');
             itemCard.className = 'card';
             itemCard.dataset.category = itemData.categoria; // Category for filtering
+            itemCard.dataset.name = itemData.nombre.toLowerCase(); // Add name data for searching
 
             // Update the item card to display new fields
             itemCard.innerHTML = `
@@ -123,7 +125,7 @@ function loadItems() {
                 <p>Talle: ${itemData.talle}</p>
                 <p>Color: ${itemData.color}</p>
                 <p>Cantidad: ${itemData.cantidad}</p>
-                <p>Precio: ${itemData.precio} pesos</p>
+                <p>Precio: $${itemData.precio} pesos</p>
                 <button class="edit-btn" data-id="${itemId}">Editar</button>
                 <button class="add-similar-btn" data-item='${JSON.stringify(itemData)}'>Agregar Prenda Similar</button>
             `;
@@ -147,12 +149,34 @@ function loadItems() {
     });
 }
 
+//------------------------------------------------------------------------------------------BUSCAR
+function filterItems() {
+    const searchBox = document.getElementById('search-box');
+    const searchQuery = searchBox.value.toLowerCase(); // Get the search query and convert to lowercase
+    const itemList = document.getElementById('item-list');
+    const items = itemList.getElementsByClassName('card'); // Get all item cards
+
+    // Loop through each item card and check if it matches the search query
+    Array.from(items).forEach(item => {
+        const itemName = item.dataset.name; // Get the item name from the dataset
+
+        if (itemName.includes(searchQuery)) {
+            item.style.display = 'block'; // Show item if it matches the search query
+        } else {
+            item.style.display = 'none'; // Hide item if it doesn't match the search query
+        }
+    });
+}
+
+// Then, attach the event listener after the function is defined
+document.getElementById('search-box').addEventListener('input', filterItems);
+
 //------------------------------------------------------------------------------------------EDITAR
 
 // Open the edit form with the item’s details
 function openEditForm(event) {
     const itemId = event.target.getAttribute('data-id');
-    
+
     // Populate the edit-categoria dropdown dynamically
     populateEditCategories().then(() => {
         // Get the item data from Firestore after populating the categories
@@ -178,6 +202,23 @@ function openEditForm(event) {
                 document.getElementById('edit-talle').value = itemData.talle || '';
                 document.getElementById('edit-color').value = itemData.color || '';
 
+
+                const newCategoryCheckbox = document.getElementById('new-category-checkbox');
+                const editCategoriaDropdown = document.getElementById('edit-categoria');
+                const newCategoryTextbox = document.getElementById('new-category-textbox');
+
+                newCategoryCheckbox.addEventListener('change', () => {
+                    if (newCategoryCheckbox.checked) {
+                        editCategoriaDropdown.style.display = 'none';
+                        newCategoryTextbox.style.display = 'block';
+                    } else {
+                        editCategoriaDropdown.style.display = 'block';
+                        newCategoryTextbox.style.display = 'none';
+                    }
+                });
+                
+                newCategoryCheckbox.checked = false;
+                newCategoryTextbox.style.display = 'none';
                 // Set the delete button's data-id attribute
                 const deleteButton = document.querySelector('.delete-btn');
                 deleteButton.setAttribute('data-id', itemId);
@@ -198,9 +239,6 @@ function openEditForm(event) {
     });
 }
 
-
-
-// Handle form submission for editing an item
 // Handle form submission for editing an item
 document.getElementById('form-editar').addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -235,10 +273,19 @@ document.getElementById('form-editar').addEventListener('submit', async function
         }
     }
 
+    // Determine if "New Category" checkbox is selected
+    const newCategoryCheckbox = document.getElementById('new-category-checkbox');
+    const newCategoryTextbox = document.getElementById('new-category-textbox');
+    let selectedCategory = document.getElementById('edit-categoria').value;
+
+    if (newCategoryCheckbox && newCategoryCheckbox.checked && newCategoryTextbox) {
+        selectedCategory = newCategoryTextbox.value.trim(); // Use value from the textbox
+    }
+
     const updatedData = {
         nombre: document.getElementById('edit-nombre').value,
         codigoCatalogo: document.getElementById('edit-codCatalogo').value,
-        categoria: document.getElementById('edit-categoria').value,
+        categoria: selectedCategory, // Use the determined category
         marca: document.getElementById('edit-marca').value,
         cantidad: parseInt(document.getElementById('edit-cantidad').value),
         precio: parseFloat(document.getElementById('edit-precio').value),
@@ -261,7 +308,6 @@ document.getElementById('form-editar').addEventListener('submit', async function
 
         // Log data after successful update
         console.log("Updated item:", itemId);
-
         // Delay reloading to ensure Firestore processes the update
         setTimeout(() => {
             loadItems();
@@ -274,15 +320,10 @@ document.getElementById('form-editar').addEventListener('submit', async function
     }
 });
 
-
-
-
-// Cancel editing
 document.getElementById('cancel-edit').addEventListener('click', () => {
     document.getElementById('edit-overlay').classList.add('hidden');
 });
 
-// Filter items based on selected category
 document.getElementById('categoria-select').addEventListener('change', function() {
     const selectedCategory = this.value;
 
@@ -330,10 +371,6 @@ async function deleteItem(itemId) {
         alert("Ocurrió un error al eliminar el ítem.");
     }
 }
-
-
-
-
 
 // Attach the delete button listener
 document.querySelector('.delete-btn').addEventListener('click', (event) => {

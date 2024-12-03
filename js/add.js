@@ -49,7 +49,24 @@ function loadCategories() {
         console.error("Error fetching categories from Firestore:", error);
     });
 }
-
+document.getElementById('add-new-category-checkbox').addEventListener('change', function() {
+    const newCategoryInput = document.getElementById('new-category');
+    const categoriaSelect = document.getElementById('categoria');
+    
+    if (this.checked) {
+        // Hide the category dropdown and show the new category input
+        categoriaSelect.style.display = 'none'; // Hide the dropdown
+        newCategoryInput.style.display = 'inline-block'; // Show the input field
+        categoriaSelect.removeAttribute('required'); // Remove required from select
+        newCategoryInput.setAttribute('required', 'required'); // Make new category input required
+    } else {
+        // Show the category dropdown and hide the new category input
+        categoriaSelect.style.display = 'inline-block'; // Show the dropdown
+        newCategoryInput.style.display = 'none'; // Hide the input field
+        newCategoryInput.removeAttribute('required'); // Remove required from input
+        categoriaSelect.setAttribute('required', 'required'); // Add required to select
+    }
+});
 // Add item to Firestore when form is submitted
 document.addEventListener('DOMContentLoaded', () => {
     // Load categories when the page is loaded
@@ -77,6 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 let talle = document.getElementById('talle').value; // New field
                 let color = document.getElementById('color').value; // New field
 
+                const newCategoryInput = document.getElementById('new-category');
+                if (document.getElementById('add-new-category-checkbox').checked) {
+                    categoria = newCategoryInput.value.trim();
+                    if (!categoria) {
+                        alert('Please enter a new category.');
+                        return;
+                    }
+                }
                 // Ensure category is selected
                 if (!categoria) {
                     alert('Por favor selecciona una categoría.');

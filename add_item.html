@@ -26,11 +26,16 @@
             
             <label for="marca">Marca:</label>
             <input type="text" id="marca" name="marca" required>
+            <label>
+                Nueva Categoría
+                <input type="checkbox" id="add-new-category-checkbox">
 
+            </label>
             <label for="categoria">Categoría:</label>
             <select id="categoria" name="categoria" required>
                 <!-- Categories will be loaded dynamically -->
             </select>
+            <input type="text" id="new-category" name="new-categoria" placeholder="Escribe una categoría" style="display: none;">
 
             <label for="cantidad">Cantidad:</label>
             <input type="number" id="cantidad" name="cantidad" required>

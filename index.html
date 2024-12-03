@@ -15,11 +15,12 @@
 <body>
     <header>
         <h1>Gestión de Inventario de Ropa</h1>
-        <a href="add_item.html">Agregar</a>
+        <h2><a href="add_item.html">Agregar item</a></h2>
     </header>
 
     <section id="inventory">
         <h2>Inventario Actual</h2>
+        <input type="text" id="search-box" placeholder="Search by item name...">
         <label for="categoria-select">Seleccionar Categoría:</label>
         <select id="categoria-select">
             <option value="all">Todos</option>
@@ -51,13 +52,19 @@
 
                 <label for="edit-codCatalogo">codCatalogo:</label>
                 <input type="text" id="edit-codCatalogo" name="codCatalogo">
+                <label>
+                    Nueva Categoría
+                    <input type="checkbox" id="new-category-checkbox">
 
+                </label>
                 <label for="edit-categoria">Categoría:</label>
                 <select id="edit-categoria" name="categoria">
                     <option value="Hombre">Hombre</option>
                     <option value="Mujer">Mujer</option>
                     <option value="Niños">Niños</option>
                 </select>
+                <input type="text" id="new-category-textbox" name="new-categoria" placeholder="Escribe una categoría" style="display: none;">
+
                 <label for="edit-marca">Marca:</label>
                 <input type="text" id="edit-marca" name="marca" required>
 
