@@ -16,8 +16,18 @@
     <header>
         <h1>Gestión de Inventario de Ropa</h1>
         <h2><a href="add_item.html">Agregar item</a></h2>
+        <h2><a href="ventas.html">Ver ventas</a></h2>
+        <button class="btnCarrito" id="cart-button">Ver Carrito</button>
     </header>
 
+ <!-- HIDDEN CARRITO -->
+ <div id="cart-modal" class="hidden">
+    <div id="cart-items-container"></div>
+    <button class="btnCarrito" id="close-cart">Cerrar</button>
+    <p>Total acumulado: $<span id="total-price">0</span></p>
+    <button class="btnCarrito" id="finalize-sale-btn">Finalizar venta</button>
+</div>
+ <!-- LOADING -->
     <section id="inventory">
         <h2>Inventario Actual</h2>
         <input type="text" id="search-box" placeholder="Search by item name...">
@@ -31,13 +41,14 @@
         
         <div id="item-list" class="card-container"></div>
     </section>
+    <!-- iMPORTING -->
     <section id="import-section">
         <h2>Importar Inventario</h2>
         <input type="file" id="excel-file" accept=".xlsx, .xls" />
         <button id="import-btn">Cargar Inventario</button>
     </section>
     
-    <!-- Edit Form Modal -->
+    <!-- EDITING -->
     <div id="edit-overlay" class="overlay hidden">
         <section id="edit-item" class="modal">
             <h2>Editar Prenda</h2>
@@ -87,6 +98,41 @@
             </form>
         </section>
     </div>
+    <!-- FINALIZING SALE -->
+<!-- Finalize Sale Modal -->
+<div id="finalize-sale-modal" class="overlay hidden">
+    <div class="modal">
+        <h2>Finalizar Venta</h2>
+        <form id="finalize-sale-form">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre del cliente">
+
+            <label for="telefono">Telefono:</label>
+            <input type="text" id="telefono" name="telefono" placeholder="Numero de telefono del cliente">
+
+            <label for="direccion">Direccion:</label>
+            <input type="text" id="direccion" name="direccion" placeholder="Direccion del cliente">
+
+            <label for="comentarios">Comentarios:</label>
+            <textarea id="comentarios" name="comentarios" placeholder="Comentarios o notas..."></textarea>
+
+            <label>
+                Fiado/Falta Pagar <input type="checkbox" id="fiado-checkbox" name="fiado"> 
+            </label>
+            <p id="payment-status">Status: <span id="status-text">Pagado</span></p>
+
+            <!-- Faltan Cuantos Pesos? - Initially hidden -->
+            <div id="fiado-amount-container" style="display: none;">
+                <label for="fiado-amount">Faltan cuantos pesos?</label>
+                <input type="number" id="fiado-amount" name="fiado-amount" placeholder="Pesos a pagar">
+            </div>
+
+            <button type="submit">Finalizar Venta</button>
+            <button type="button" id="cancel-sale">Cancelar</button>
+        </form>
+    </div>
+</div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script type="module" src="js/app.js"></script> 
 </body>

@@ -1,7 +1,9 @@
+/* GENERAL STARTS */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
+    text-transform: uppercase;
 }
 
 header {
@@ -13,6 +15,37 @@ header {
 
 h2 {
     margin-top: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    text-decoration: none;
+}
+h2 a {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007BFF;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 a:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+h2 a:active {
+    background-color: #003f7f;
+    transform: scale(1);
 }
 
 form {
@@ -52,8 +85,12 @@ button {
 }
 
 button:hover {
-    background: #45a049;
+    background: #007bff;
+    transition: 1s;
 }
+
+/* GENERAL ENDS*/
+/* INDEX STARTS  */
 
 #item-list {
     list-style: none;
@@ -68,7 +105,6 @@ button:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* General Styling */
 
 
 #inventory {
@@ -130,17 +166,104 @@ button:hover {
     z-index: 10;
 }
 
+/* INDEX ENDS  */
+
+/* MODAL STARTS*/
 .modal {
     background: white;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-height: 90vh; /* Limit height to 90% of the viewport */
+    overflow-y: auto; /* Enable scrolling for content */
+    width: 100%; /* Default width */
+    max-width: 600px; /* Maximum width for larger screens */
 }
 
+/* Adjust modal for smaller screens */
+@media (max-width: 768px) {
+    .modal {
+        width: 90%; /* Use 90% width for smaller screens */
+    }
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+}
+
+/* MODAL ENDS*/
+
+/* CART STARTS*/
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#cart-total {
+    margin-top: 20px;
+    text-align: right;
+}
+
+#checkout-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+
+}
+
+#checkout-btn:hover {
+    background-color: #45a049;
+    transition: 9s;
+
+}
 /* Hide modal initially */
 .hidden {
     display: none;
 }
+
+#cart-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;  /* Add some space between items */
+}
+
+.cart-item {
+    width: 150px;  /* Set the width for each item */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ddd;  /* Border for the items */
+    padding: 10px;
+    text-align: center;
+}
+
+.cart-item img {
+    width: 100px;  /* Limit image size */
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.btnCarrito{      
+    font-size: xx-large;
+}
+/* CART ENDS*/
 
 /* Card Styling Adjustments */
 .card-container {
@@ -167,7 +290,7 @@ button:hover {
     margin-bottom: 10px;
 }
 
-/* LOGIN */
+/* LOGIN STARTS */
 #login-section {
     max-width: 400px;
     margin: 100px auto;
