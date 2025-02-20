@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Prenda</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="js/add.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Agregar Nueva Prenda</h1>
+        <h2><a href="index.html">Volver</a></h2>
+    </header>
+
+    <section id="add-item">
+        <h2>Agregar nueva prenda</h2>
+        <form id="form-agregar">
+
+            
+            <label for="codigoCatalogo">Código Catálogo:</label>
+            <input type="text" id="codigoCatalogo" name="codigoCatalogo" required>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" name="marca" required>
+            <label>
+                Nueva Categoría
+                <input type="checkbox" id="add-new-category-checkbox">
+
+            </label>
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" name="categoria" required>
+                <!-- Categories will be loaded dynamically -->
+            </select>
+            <input type="text" id="new-category" name="new-categoria" placeholder="Escribe una categoría" style="display: none;">
+
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidad" name="cantidad" required>
+
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" name="precio" required>
+
+            <!-- New Fields -->
+            <label for="talle">Talle:</label>
+            <input type="text" id="talle" name="talle" required>
+
+            <label for="color">Color:</label>
+            <input type="text" id="color" name="color" required>
+
+            <button type="submit">Agregar Prenda</button>
+        </form>
+    </section>
+</body>
+<script type="module" src="js/add.js"></script> 
+</html>
